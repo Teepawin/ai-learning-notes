@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Core machine learning concepts: learning setups, evaluation, data leakage, and a scikit-learn example.">
+    <title>Machine Learning Basics - AI &amp; Data Science Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
+    <nav class="bg-white border-b border-slate-200 py-4 px-6 mb-8 shadow-sm" aria-label="Main navigation">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="font-bold text-indigo-600 hover:text-indigo-800">&larr; Back to Home</a>
+            <span class="text-sm text-slate-500">AI Knowledge Base</span>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 mb-12">
+        <h1 class="text-3xl font-bold mb-4 text-slate-900">Machine Learning Basics</h1>
+        <p class="text-sm text-slate-500 mb-6">Published: 2026-11-17 | Category: Technical Notes</p>
+
+        <article class="space-y-6">
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">What machine learning does</h2>
+                <p>
+                    A machine-learning model uses examples to learn a function that maps inputs to outputs. In supervised learning,
+                    examples include target labels (such as a class or numeric value). In unsupervised learning, the data has no
+                    target labels; methods instead find structure, such as clusters or lower-dimensional representations.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Training and evaluation</h2>
+                <p>
+                    Training adjusts model parameters to reduce a loss function on training data. A validation set can guide model
+                    selection and hyperparameter tuning, while a held-out test set estimates performance on unseen data after those
+                    choices are made. Choose metrics that match the task: accuracy is easy to interpret for balanced classification,
+                    while precision, recall, F1, or a regression metric may be more informative in other settings.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Avoid data leakage</h2>
+                <p>
+                    Leakage occurs when training or model selection uses information that would not be available at prediction time.
+                    Split data before fitting preprocessing steps, and fit transformations such as scaling only on the training data.
+                    A pipeline helps ensure the same learned preprocessing is applied consistently to validation, test, and future data.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Example: a classification pipeline</h2>
+                <p class="mb-3">
+                    This scikit-learn example separates a test set, scales features using training data only, and reports held-out accuracy.
+                    The Iris dataset is small and intended for demonstration, not as evidence of real-world performance.
+                </p>
+                <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-100 p-4 text-sm text-slate-800"><code>from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+model = make_pipeline(
+    StandardScaler(),
+    LogisticRegression(max_iter=1000)
+)
+model.fit(X_train, y_train)
+print(f"Test accuracy: {model.score(X_test, y_test):.3f}")</code></pre>
+                <p class="mt-3">
+                    The pipeline learns scaling parameters from <code class="rounded bg-slate-100 px-1">X_train</code> during fitting,
+                    then reuses them to transform <code class="rounded bg-slate-100 px-1">X_test</code>. In a larger workflow, keep the test
+                    set untouched until the final evaluation.
+                </p>
+            </section>
+        </article>
+    </main>
+</body>
+</html>

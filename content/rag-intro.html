@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An introduction to retrieval-augmented generation, its components, and a vendor-neutral example flow.">
+    <title>Introduction to RAG - AI &amp; Data Science Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
+    <nav class="bg-white border-b border-slate-200 py-4 px-6 mb-8 shadow-sm" aria-label="Main navigation">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="font-bold text-indigo-600 hover:text-indigo-800">&larr; Back to Home</a>
+            <span class="text-sm text-slate-500">AI Knowledge Base</span>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 mb-12">
+        <h1 class="text-3xl font-bold mb-4 text-slate-900">Introduction to Retrieval-Augmented Generation</h1>
+        <p class="text-sm text-slate-500 mb-6">Published: 2026-11-17 | Category: Technical Notes</p>
+
+        <article class="space-y-6">
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">What RAG is</h2>
+                <p>
+                    Retrieval-augmented generation (RAG) supplies a language model with relevant external passages at answer time.
+                    Rather than relying only on information encoded in model parameters, a RAG application retrieves from a
+                    separately maintained collection and includes selected results in the generation prompt.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Typical flow</h2>
+                <ol class="list-decimal pl-6 space-y-2">
+                    <li><strong>Ingest:</strong> extract text and useful metadata from source documents.</li>
+                    <li><strong>Chunk and index:</strong> divide documents into passages, create an embedding for each, and store the vectors with passage text and metadata.</li>
+                    <li><strong>Retrieve:</strong> embed the user's query and find relevant passages, often using vector similarity, keyword search, or a hybrid approach.</li>
+                    <li><strong>Generate:</strong> provide the question and selected passages to the language model, asking it to answer from that context and identify supporting sources.</li>
+                </ol>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Illustrative query-time code</h2>
+                <p class="mb-3">
+                    The functions below represent application-specific embedding, search, and model APIs. A production system should
+                    preserve source metadata with each result so the answer can cite the retrieved material.
+                </p>
+                <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-100 p-4 text-sm text-slate-800"><code>def answer_question(question, embed, vector_store, generate):
+    query_vector = embed(question)
+    passages = vector_store.search(query_vector, top_k=4)
+
+    context = "\n\n".join(
+        f"[{item.metadata['source']}] {item.text}"
+        for item in passages
+    )
+    return generate(
+        prompt=(
+            "Answer using the supplied context. If it does not contain "
+            "the answer, say so. Cite relevant source labels.\n\n"
+            f"Context:\n{context}\n\nQuestion: {question}"
+        )
+    )</code></pre>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-slate-900 mb-2">Practical considerations</h2>
+                <p>
+                    Chunk size and overlap affect what information can be retrieved together; tune them for the document types and
+                    questions in your application. Increasing the number of retrieved passages can improve coverage but also add
+                    irrelevant context and consume more prompt space. RAG can make answers more grounded and sources easier to
+                    inspect, but it does not guarantee correctness: retrieval may miss evidence, and a model may still misinterpret
+                    or ignore it. Evaluate retrieval quality and answer quality separately using representative questions.
+                </p>
+            </section>
+        </article>
+    </main>
+</body>
+</html>
