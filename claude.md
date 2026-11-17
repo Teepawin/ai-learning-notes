@@ -61,3 +61,9 @@ When the AI assists in creating or modifying an article page, the new page must 
     </main>
 </body>
 </html>
+```
+
+## 5. AI Modification and Addition Rules
+1. **Maintain Consistency**: When creating new pages, you must reuse the Tailwind CSS classes and navigation layout specified above to ensure a uniform visual style across the site.
+2. **Synchronize Homepage**: Whenever a new article page is added to `content/`, the article list hyperlinks in `index.html` must be updated simultaneously so users can access the new article from the homepage.
+3. **Semantic Tags**: Make extensive use of semantic tags such as `<section>`, `<article>`, and `<code>` to enhance readability and long-term maintainability.
